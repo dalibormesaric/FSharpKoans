@@ -60,6 +60,24 @@ module ``about the stock example`` =
 
     [<Koan>]
     let YouGotTheAnswerCorrect() =
-        let result =  __
+    
+        let splitCommas (x:string) =
+            x.Split([|','|])
+
+        let getResult (x: string []) =
+            x.[0], (System.Double.Parse(x.[1], System.Globalization.CultureInfo.InvariantCulture)) - (System.Double.Parse(x.[4], System.Globalization.CultureInfo.InvariantCulture))
+
+        let getResults n =
+            stockData.Item(n) |> splitCommas |> getResult
+
+        let rec getResultIfMax d f n =
+            match n with
+            | 1 -> d, f
+            | _ ->
+                let d2, f2 = getResults (n - 1)
+                if abs(f2) > abs(f) then getResultIfMax d2 f2 (n - 1)
+                else getResultIfMax d f (n - 1)
+
+        let result = fst (getResultIfMax "" 0.0 stockData.Length)
         
         AssertEquality "2012-03-13" result
